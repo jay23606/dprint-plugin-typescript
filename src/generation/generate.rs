@@ -7834,11 +7834,13 @@ where
     .iter()
     .find(|t| t.token == Token::LBrace)
     .expect("Expected to find an open brace token.");
-  let close_brace_token = child_tokens
-    .iter()
-    .rev()
-    .find(|t| t.token == Token::RBrace)
-    .expect("Expected to find a close brace token.");
+  let close_brace_token = child_tokens.iter().rev().find(|t| t.token == Token::RBrace);
+  let Some(close_brace_token) = close_brace_token else {
+    context.diagnostics.push(context::GenerateDiagnostic {
+      message: "Syntax error: expected '}' before end of file.".into(),
+    });
+    return items;
+  };
 
   items.extend(gen_brace_separator(
     GenBraceSeparatorOptions {

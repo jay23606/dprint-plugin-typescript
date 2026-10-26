@@ -286,6 +286,19 @@ mod test {
   }
 
   #[test]
+  fn unclosed_exported_namespace_returns_error() {
+    let config = crate::configuration::ConfigurationBuilder::new().build();
+    let result = format_text(FormatTextOptions {
+      path: &std::path::PathBuf::from("test.ts"),
+      extension: None,
+      text: "export namespace Foo {\n  const x = 1;\n".into(),
+      config: &config,
+      external_formatter: None,
+    });
+    assert!(result.is_err());
+  }
+
+  #[test]
   fn format_program_from_ast_view() {
     let config = crate::configuration::ConfigurationBuilder::new().build();
     let parsed_source = parse_program(ParseOptions {
